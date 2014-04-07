@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">VesoMeshRecorder</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="record_instructions">Press the start button to start recording. Press it again to pause.  Press stop to stop recording.</string>
+
+</resources>
