@@ -20,10 +20,8 @@ public class RecordingListFragment extends SherlockListFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		
 		filelist.add("None");
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-				android.R.layout.simple_list_item_1, filelist);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, filelist);
 		setListAdapter(adapter);
 		updateList();
 
@@ -50,14 +48,11 @@ public class RecordingListFragment extends SherlockListFragment {
 			String c = MimeTypeMap.getSingleton().getMimeTypeFromExtension("wav");
 			intent.setDataAndType(Uri.fromFile(selection), MimeTypeMap.getSingleton().getMimeTypeFromExtension("wav"));  
 			intent.setAction(android.content.Intent.ACTION_VIEW);  
-
 			startActivity(intent);
-
 		}
 	}
 	
 	public void updateList(){
-
 		if(directory.exists()){
 			String [] filenames;
 			filenames = directory.list();
@@ -69,9 +64,6 @@ public class RecordingListFragment extends SherlockListFragment {
 				filelist.add("None");
 			}
 			((ArrayAdapter<String>)this.getListAdapter()).notifyDataSetChanged();
-
 		}
-	
-
 	}
 }

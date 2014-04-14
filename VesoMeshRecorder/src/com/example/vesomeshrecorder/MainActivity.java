@@ -88,6 +88,7 @@ public class MainActivity extends SherlockFragmentActivity {
 		{
 			audioRecorder.stop();
 		}
+		timeSwap = 0;
 		finalTime = 0;
 		int seconds = (int) (finalTime / 1000);
 		int minutes = seconds / 60;
