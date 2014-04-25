@@ -9,18 +9,71 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.webkit.MimeTypeMap;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
 
 public class RecordingListFragment extends SherlockListFragment {
+	private String uploadAddress = "http://10.1.1.5/vesomesh/upload.php";
 	private File directory = new File(Environment.getExternalStorageDirectory().toString()+"/recordings");
 	private ArrayList<String> filelist = new ArrayList<String>();
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		filelist.add("None");
+		getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+				Toast.makeText(getActivity(), "Uploading", Toast.LENGTH_LONG).show();
+
+				String filename = filelist.get(arg2);
+				File[] fl  = directory.listFiles();
+				File selection = null;
+				if(directory.exists()){
+					for(File f: fl){
+						if(f.getName().equals(filename)){
+							selection = f;
+						}
+					}
+				}
+				if(selection==null){
+					Toast.makeText(RecordingListFragment.this.getActivity(), "Could not find file.", Toast.LENGTH_LONG).show();
+					return false;
+					//TODO handle errror
+				}
+				else{
+					//Upload File
+					ProgressBar progress = new ProgressBar(RecordingListFragment.this.getActivity(), null, android.R.attr.progressBarStyleSmall);
+
+					Ion.with(RecordingListFragment.this.getActivity(), uploadAddress)
+					.uploadProgressBar(progress)
+					.setMultipartFile(filename+".wav", selection)
+					.asJsonObject()
+					.setCallback(new FutureCallback<JsonObject>() {
+						@Override
+						public void onCompleted(Exception arg0,
+								JsonObject arg1) {
+							if(arg0!=null){
+								Toast.makeText(RecordingListFragment.this.getActivity(), "Problem with upload"+arg0.toString(), Toast.LENGTH_LONG).show();
+								return;
+							}
+							Toast.makeText(RecordingListFragment.this.getActivity(), "Done", Toast.LENGTH_LONG).show();
+
+
+						}
+					});
+				}
+
+				return true;
+			}
+		});		filelist.add("None");
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, filelist);
 		setListAdapter(adapter);
 		updateList();
@@ -51,7 +104,7 @@ public class RecordingListFragment extends SherlockListFragment {
 			startActivity(intent);
 		}
 	}
-	
+
 	public void updateList(){
 		if(directory.exists()){
 			String [] filenames;
